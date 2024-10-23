@@ -10,7 +10,7 @@ import {
 import protectedRoute from "../middlware/protectedRoute.js";
 
 router.get("/me", protectedRoute, getMe);
-router.post("/signup", signup);
-router.post("/login", login);
-router.post("/logout", logout);
+router.post("/signup", signup); //done
+router.post("/login", login); //done
+router.post("/logout", logout); //done
 export default router;

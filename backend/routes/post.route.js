@@ -10,12 +10,11 @@ import {
 } from "../controllers/post.contoller.js";
 const router = express.Router();
 
-router.get("/all", protectedRoute, allPosts);
+router.get("/all", protectedRoute, allPosts); // done
 router.get("/:username", protectedRoute, userPosts);
-router.post("/create", protectedRoute, createPost);
+router.post("/create", protectedRoute, createPost); //done
 router.delete("/delete/:id", protectedRoute, deletePost);
-router.put("/like/:id", protectedRoute, likeUnlikePost);
 router.put("/comment/:id", protectedRoute, commentPost);
-// router.post("/create", protectedRoute, createPost);
+router.put("/like/:id", protectedRoute, likeUnlikePost); //done
 
 export default router;

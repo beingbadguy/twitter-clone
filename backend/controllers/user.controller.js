@@ -44,17 +44,13 @@ export const followUnfollowUser = async (req, res) => {
     }
 
     const isFollowing = loggedInUser.following.includes(id);
-    console.log(isFollowing);
+    // console.log(isFollowing);
     if (isFollowing) {
       await User.findByIdAndUpdate(req.user._id, {
         $pull: { following: id },
       });
       await User.findByIdAndUpdate(id, {
         $pull: { followers: req.user._id },
-      });
-      res.status(200).json({
-        success: true,
-        message: "You have unfollowed this user.",
       });
     } else {
       await User.findByIdAndUpdate(req.user._id, {
@@ -63,11 +59,14 @@ export const followUnfollowUser = async (req, res) => {
       await User.findByIdAndUpdate(id, {
         $push: { followers: req.user._id },
       });
-      res.status(200).json({
-        success: true,
-        message: "You have followed this user.",
-      });
     }
+    const updatedUser = await User.findById(req.user._id);
+    updatedUser.password = null;
+
+    res.status(200).json({
+      success: true,
+      user: updatedUser,
+    });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({
@@ -97,7 +96,7 @@ export const suggestedUsers = async (req, res) => {
     const filteredUsers = usersNotFollowedByMe.filter((user) => {
       return !usersFollowedByMe.following.includes(user._id);
     });
-    console.log(filteredUsers);
+    // console.log(filteredUsers);
     const suggestedUsers = filteredUsers.slice(0, 5);
     suggestedUsers.forEach((user) => (user.password = null));
     return res.status(200).json({
@@ -116,7 +115,9 @@ export const suggestedUsers = async (req, res) => {
 export const updateProfile = async (req, res) => {
   const { username, name, email, currentPassword, newPassword, bio, link } =
     req.body;
-  const { profileImage, coverImage } = req.body;
+  const profile = req.files?.profileImage;
+  const cover = req.files?.coverImage;
+
   const userId = req.user._id;
   try {
     let user = await User.findById(userId);
@@ -135,7 +136,6 @@ export const updateProfile = async (req, res) => {
         message: "Current password and new password are required or both.",
       });
     }
-
     if (currentPassword && newPassword) {
       const isMatch = await bcrypt.compare(currentPassword, user.password);
       if (!isMatch) {
@@ -162,25 +162,40 @@ export const updateProfile = async (req, res) => {
         });
       }
     }
-    if (profileImage) {
+    let profileImage;
+    if (profile) {
       if (user.profileImage) {
         await cloudinary.uploader.destroy(
           user.profileImage.split("/").pop().split(".")[0]
         );
       }
-      const uploadImage = await cloudinary.uploader.upload(profileImage);
-      profileImage = uploadImage.secure_url;
+      const uploadResponse = await cloudinary.uploader.upload(
+        profile.tempFilePath,
+        {
+          folder: "SnapWay", // Optional: Specify a folder in Cloudinary
+          use_filename: true, // Optional: Use the original file name
+          unique_filename: true, // Optional: Ensure unique file names
+        }
+      );
+      profileImage = uploadResponse.secure_url;
     }
-    if (coverImage) {
+    let coverImage;
+    if (cover) {
       if (user.coverImage) {
         await cloudinary.uploader.destroy(
           user.coverImage.split("/").pop().split(".")[0]
         );
       }
-      const uploadImage = await cloudinary.uploader.upload(coverImage);
-      coverImage = uploadImage.secure_url;
+      const uploadResponse = await cloudinary.uploader.upload(
+        cover.tempFilePath,
+        {
+          folder: "SnapWay", // Optional: Specify a folder in Cloudinary
+          use_filename: true, // Optional: Use the original file name
+          unique_filename: true, // Optional: Ensure unique file names
+        }
+      );
+      coverImage = uploadResponse.secure_url;
     }
-
     user.name = name || user.name;
     user.email = email || user.email;
     user.bio = bio || user.bio;
@@ -188,7 +203,6 @@ export const updateProfile = async (req, res) => {
     user.profileImage = profileImage || user.profileImage;
     user.coverImage = coverImage || user.coverImage;
     user.username = username || user.username;
-
     await user.save();
     user.password = null;
     res.status(200).json({

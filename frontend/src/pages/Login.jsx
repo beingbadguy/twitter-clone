@@ -1,22 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Input } from "./components/ui/input";
-import { Button } from "./components/ui/button";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 import { Separator } from "@radix-ui/react-separator";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiFillEye } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import { SocialContext } from "./context/store";
+import { SocialContext } from "@/context/store";
 
-const App = () => {
-  const navigate = useNavigate();
+const Login = () => {
   const { user, setUser } = useContext(SocialContext);
-  // console.log(user);
 
+  const navigate = useNavigate();
   const [showPass, setShowPass] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
     username: "",
-    email: "",
     password: "",
   });
   const handleChange = (event) => {
@@ -24,12 +21,7 @@ const App = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      formData.name === "" ||
-      formData.username === "" ||
-      formData.password === "" ||
-      formData.email === ""
-    ) {
+    if (formData.password === "" || formData.username === "") {
       return alert("All the fields are required");
     }
     if (formData.password.length < 6) {
@@ -37,7 +29,7 @@ const App = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/v1/auth/signup", {
+      const response = await fetch("http://localhost:8080/v1/auth/login", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -49,13 +41,12 @@ const App = () => {
       const data = await response.json();
       // console.log(data.success);
       if (data.name) {
-        // console.log(data);
+        console.log(data);
         localStorage.setItem("SnapWay", JSON.stringify(data));
         setUser(data);
         navigate("/home/home");
       } else {
-        console.log(data.message);
-        alert(data.message);
+        throw new Error();
       }
     } catch (error) {
       console.log(error.message);
@@ -85,25 +76,15 @@ const App = () => {
           >
             <div className="mb-2">
               <div className="bg-[#18e018] w-[50px] p-2 rounded my-2">
-                <img src="./SnapWay.svg" alt="" />
+                <img src="./SnapWay.svg" alt="" className="" />
               </div>
-              <p className="font-bold text-2xl mt-6">Get Started</p>
+              <p className="font-bold text-2xl mt-6">Let's Login</p>
               <p className="mt-2 text-lg">
-                Welcome to the SocialWay - Let's create your account
+                Welcome to the SocialWay - Let's login to your account
               </p>
             </div>
             <hr className="border-1 border-gray-200 w-full mt-6" />
 
-            <label className="font-bold mt-4">Name</label>
-            <Input
-              placeholder="Enter name"
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={(e) => {
-                handleChange(e);
-              }}
-            />
             <label className="font-bold mt-4">Username</label>
 
             <Input
@@ -111,17 +92,6 @@ const App = () => {
               type="text"
               name="username"
               value={formData.username}
-              onChange={(e) => {
-                handleChange(e);
-              }}
-            />
-            <label className="font-bold mt-4">Email</label>
-
-            <Input
-              placeholder="Enter Gmail"
-              type="email"
-              name="email"
-              value={formData.email}
               onChange={(e) => {
                 handleChange(e);
               }}
@@ -150,21 +120,21 @@ const App = () => {
 
             <Button
               variant="outline"
-              className="w-full mt-4 bg-green-800 text-white font-bold hover:bg-green-500"
+              className="w-full mt-4 bg-green-800 text-white font-bold hover:bg-green-500 "
               type="submit"
             >
               Button
             </Button>
           </form>
           <p>
-            Already have an account?{" "}
+            Don't have an account? {""}
             <span
               className="text-green-700 font-bold cursor-pointer"
               onClick={() => {
-                navigate("/login");
+                navigate("/");
               }}
             >
-              Login
+              Signup
             </span>
           </p>
         </div>
@@ -178,4 +148,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Login;

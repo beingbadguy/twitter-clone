@@ -3,26 +3,32 @@ import User from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
 export const createPost = async (req, res) => {
   const { text } = req.body;
-  let { image } = req.body;
+  let content = req.files?.image;
+  // console.log(content);
   const userId = req.user._id.toString();
   try {
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    if (!text && !image) {
+    if (!text && !content) {
       return res.status(400).json({
         message: "Text or image is required",
       });
     }
-    if (image) {
-      const response = await cloudinary.uploader.upload(image);
+    let image;
+    if (content) {
+      const response = await cloudinary.uploader.upload(content.tempFilePath, {
+        folder: "SnapWay", // Optional: Specify a folder in Cloudinary
+        use_filename: true, // Optional: Use the original file name
+        unique_filename: true, // Optional: Ensure unique file names
+      });
       image = response.secure_url;
     }
     const newPost = new Post({
       user: userId,
       text,
-      image,
+      image: image,
     });
     await newPost.save();
     return res.status(201).json({ post: newPost });
