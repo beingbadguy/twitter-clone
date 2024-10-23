@@ -1,5 +1,4 @@
 import path from "path";
-
 import express, { urlencoded } from "express";
 import authRouter from "./routes/auth.route.js";
 import databaseConnection from "./config/dbConnection.js";
@@ -17,7 +16,16 @@ const PORT = process.env.PORT || 8000;
 
 const __dirname = path.resolve();
 
-app.use(cors());
+// CORS Configuration
+const corsOptions = {
+  origin:
+    process.env.NODE_ENV === "production"
+      ? "https://twitter-clone-44wi.onrender.com/"
+      : "http://localhost:5173",
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
 app.use(
   fileUpload({
     useTempFiles: true,
@@ -40,11 +48,12 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.get("/", (req, res) => {
-  res.send("Hey , welcome to the twitter");
+  res.send("Hey, welcome to the Twitter");
 });
 
-app.listen(PORT, (req, res) => {
+app.listen(PORT, () => {
+  console.log("Attempting to connect to the database...");
   databaseConnection();
   cloudinaryConnect();
-  console.log("App has started Listening on" + PORT);
+  console.log("App has started Listening on " + PORT);
 });
