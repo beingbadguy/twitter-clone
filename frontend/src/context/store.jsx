@@ -8,7 +8,7 @@ const MainContext = ({ children }) => {
   const FollowUnfollowProfile = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/v1/user/follow/${id}`,
+        `https://twitter-clone-44wi.onrender.com/v1/user/follow/${id}`,
         {
           method: "POST",
           headers: {

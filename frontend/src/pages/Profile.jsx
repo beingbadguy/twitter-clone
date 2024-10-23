@@ -53,11 +53,14 @@ const Profile = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/v1/user/update", {
-        method: "POST",
-        credentials: "include",
-        body: formDataObj,
-      });
+      const response = await fetch(
+        "https://twitter-clone-44wi.onrender.com/v1/user/update",
+        {
+          method: "POST",
+          credentials: "include",
+          body: formDataObj,
+        }
+      );
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message);

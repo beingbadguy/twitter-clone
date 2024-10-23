@@ -12,13 +12,16 @@ const Layout = () => {
   const { user, setUser, FollowUnfollowProfile } = useContext(SocialContext);
   const logoutHandler = async () => {
     try {
-      const response = await fetch("http://localhost:8080/v1/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://twitter-clone-44wi.onrender.com/v1/auth/logout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
       const data = await response.json();
       // console.log(data);
       if (localStorage.getItem("SnapWay")) {
@@ -63,13 +66,16 @@ const Layout = () => {
 
   const suggestedUsers = async () => {
     try {
-      const response = await fetch("http://localhost:8080/v1/user/suggested", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://twitter-clone-44wi.onrender.com/v1/user/suggested",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
       const data = await response.json();
       console.log(data.suggestedUsers);
       setSuggested(data.suggestedUsers);

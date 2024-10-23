@@ -29,14 +29,17 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "https://twitter-clone-44wi.onrender.com/v1/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await response.json();
       // console.log(data.success);

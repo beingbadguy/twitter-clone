@@ -32,11 +32,14 @@ const HomePage = () => {
     if (image) newform.append("image", image);
 
     try {
-      const response = await fetch("http://localhost:8080/v1/post/create", {
-        method: "POST",
-        body: newform,
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://twitter-clone-44wi.onrender.com/v1/post/create",
+        {
+          method: "POST",
+          body: newform,
+          credentials: "include",
+        }
+      );
       const data = await response.json();
       // console.log(data);
       setText("");
@@ -46,13 +49,16 @@ const HomePage = () => {
   };
   const handleLike = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/v1/post/like/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await fetch(
+        `https://twitter-clone-44wi.onrender.com/v1/post/like/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
       const data = await response.json();
       console.log(data);
       fetchAllPosts();
@@ -62,13 +68,16 @@ const HomePage = () => {
   };
   const fetchAllPosts = async (e) => {
     try {
-      const response = await fetch("http://localhost:8080/v1/post/all", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://twitter-clone-44wi.onrender.com/v1/post/all",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
       const data = await response.json();
       console.log(data?.posts);
       setPost(data?.posts);
